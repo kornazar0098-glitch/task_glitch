@@ -1,1 +1,55 @@
-const { DataTypes } = require('sequelize');\nconst sequelize = require('../config/database');\n\nconst Booking = sequelize.define('Booking', {\n  id: {\n    type: DataTypes.INTEGER,\n    primaryKey: true,\n    autoIncrement: true,\n  },\n  task_id: {\n    type: DataTypes.INTEGER,\n    allowNull: false,\n    references: {\n      model: 'tasks',\n      key: 'id',\n    },\n  },\n  worker_id: {\n    type: DataTypes.INTEGER,\n    allowNull: false,\n    references: {\n      model: 'users',\n      key: 'id',\n    },\n  },\n  proposed_price: {\n    type: DataTypes.DECIMAL(10, 2),\n    allowNull: false,\n  },\n  accepted_price: {\n    type: DataTypes.DECIMAL(10, 2),\n    allowNull: true,\n  },\n  message: {\n    type: DataTypes.TEXT,\n    allowNull: true,\n  },\n  status: {\n    type: DataTypes.ENUM('pending', 'accepted', 'rejected', 'completed', 'cancelled'),\n    defaultValue: 'pending',\n  },\n  start_time: {\n    type: DataTypes.DATE,\n    allowNull: true,\n  },\n  end_time: {\n    type: DataTypes.DATE,\n    allowNull: true,\n  },\n  payment_status: {\n    type: DataTypes.ENUM('pending', 'paid', 'failed'),\n    defaultValue: 'pending',\n  },\n  transaction_id: {\n    type: DataTypes.STRING(255),\n    allowNull: true,\n  },\n}, {\n  timestamps: true,\n  tableName: 'bookings',\n});\n\nmodule.exports = Booking;\n
+const { DataTypes } = require('sequelize');
+const sequelize = require('../config/database');
+
+const Booking = sequelize.define('Booking', {
+  id: {
+    type: DataTypes.INTEGER,
+    primaryKey: true,
+    autoIncrement: true,
+  },
+  task_id: {
+    type: DataTypes.INTEGER,
+    allowNull: false,
+    references: {
+      model: 'tasks',
+      key: 'id',
+    },
+  },
+  worker_id: {
+    type: DataTypes.INTEGER,
+    allowNull: false,
+    references: {
+      model: 'users',
+      key: 'id',
+    },
+  },
+  proposed_price: {
+    type: DataTypes.DECIMAL(12, 2),
+    allowNull: false,
+  },
+  message: {
+    type: DataTypes.TEXT,
+    allowNull: true,
+  },
+  status: {
+    type: DataTypes.ENUM('pending', 'accepted', 'rejected', 'cancelled'),
+    defaultValue: 'pending',
+  },
+  accepted_at: {
+    type: DataTypes.DATE,
+    allowNull: true,
+  },
+  rejected_at: {
+    type: DataTypes.DATE,
+    allowNull: true,
+  },
+  completed_at: {
+    type: DataTypes.DATE,
+    allowNull: true,
+  },
+}, {
+  timestamps: true,
+  tableName: 'bookings',
+});
+
+module.exports = Booking;

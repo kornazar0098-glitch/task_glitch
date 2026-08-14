@@ -1,1 +1,56 @@
-const sequelize = require('../config/database');\nconst User = require('./User');\nconst Task = require('./Task');\nconst Booking = require('./Booking');\nconst Review = require('./Review');\nconst Message = require('./Message');\n\n// Define associations\n\n// User associations\nUser.hasMany(Task, { foreignKey: 'customer_id', as: 'createdTasks' });\nUser.hasMany(Booking, { foreignKey: 'worker_id', as: 'workerBookings' });\nUser.hasMany(Review, { foreignKey: 'reviewer_id', as: 'givenReviews' });\nUser.hasMany(Review, { foreignKey: 'reviewed_user_id', as: 'receivedReviews' });\nUser.hasMany(Message, { foreignKey: 'sender_id', as: 'sentMessages' });\nUser.hasMany(Message, { foreignKey: 'receiver_id', as: 'receivedMessages' });\n\n// Task associations\nTask.belongsTo(User, { foreignKey: 'customer_id', as: 'customer' });\nTask.hasMany(Booking, { foreignKey: 'task_id', as: 'bookings' });\n\n// Booking associations\nBooking.belongsTo(Task, { foreignKey: 'task_id', as: 'task' });\nBooking.belongsTo(User, { foreignKey: 'worker_id', as: 'worker' });\nBooking.hasOne(Review, { foreignKey: 'booking_id', as: 'review' });\nBooking.hasMany(Message, { foreignKey: 'booking_id', as: 'messages' });\n\n// Review associations\nReview.belongsTo(Booking, { foreignKey: 'booking_id', as: 'booking' });\nReview.belongsTo(User, { foreignKey: 'reviewer_id', as: 'reviewer' });\nReview.belongsTo(User, { foreignKey: 'reviewed_user_id', as: 'reviewedUser' });\n\n// Message associations\nMessage.belongsTo(Booking, { foreignKey: 'booking_id', as: 'booking' });\nMessage.belongsTo(User, { foreignKey: 'sender_id', as: 'sender' });\nMessage.belongsTo(User, { foreignKey: 'receiver_id', as: 'receiver' });\n\nmodule.exports = {\n  sequelize,\n  User,\n  Task,\n  Booking,\n  Review,\n  Message,\n};\n
+const sequelize = require('../config/database');
+const User = require('./User');
+const Task = require('./Task');
+const Booking = require('./Booking');
+const Review = require('./Review');
+const Payment = require('./Payment');
+const Message = require('./Message');
+
+// Define associations
+
+// User associations
+User.hasMany(Task, { foreignKey: 'customer_id', as: 'tasks_created' });
+User.hasMany(Booking, { foreignKey: 'worker_id', as: 'bookings' });
+User.hasMany(Review, { foreignKey: 'reviewer_id', as: 'reviews_given' });
+User.hasMany(Review, { foreignKey: 'reviewed_user_id', as: 'reviews_received' });
+User.hasMany(Message, { foreignKey: 'sender_id', as: 'messages_sent' });
+User.hasMany(Message, { foreignKey: 'receiver_id', as: 'messages_received' });
+User.hasMany(Payment, { foreignKey: 'customer_id', as: 'payments_made' });
+User.hasMany(Payment, { foreignKey: 'worker_id', as: 'payments_received' });
+
+// Task associations
+Task.belongsTo(User, { foreignKey: 'customer_id', as: 'customer' });
+Task.hasMany(Booking, { foreignKey: 'task_id', as: 'bookings' });
+Task.belongsTo(User, { foreignKey: 'assigned_to', as: 'assigned_worker' });
+
+// Booking associations
+Booking.belongsTo(Task, { foreignKey: 'task_id', as: 'task' });
+Booking.belongsTo(User, { foreignKey: 'worker_id', as: 'worker' });
+Booking.hasOne(Review, { foreignKey: 'booking_id', as: 'review' });
+Booking.hasOne(Payment, { foreignKey: 'booking_id', as: 'payment' });
+Booking.hasMany(Message, { foreignKey: 'booking_id', as: 'messages' });
+
+// Review associations
+Review.belongsTo(Booking, { foreignKey: 'booking_id', as: 'booking' });
+Review.belongsTo(User, { foreignKey: 'reviewer_id', as: 'reviewer' });
+Review.belongsTo(User, { foreignKey: 'reviewed_user_id', as: 'reviewed_user' });
+
+// Payment associations
+Payment.belongsTo(Booking, { foreignKey: 'booking_id', as: 'booking' });
+Payment.belongsTo(User, { foreignKey: 'customer_id', as: 'customer' });
+Payment.belongsTo(User, { foreignKey: 'worker_id', as: 'worker' });
+
+// Message associations
+Message.belongsTo(Booking, { foreignKey: 'booking_id', as: 'booking' });
+Message.belongsTo(User, { foreignKey: 'sender_id', as: 'sender' });
+Message.belongsTo(User, { foreignKey: 'receiver_id', as: 'receiver' });
+
+module.exports = {
+  sequelize,
+  User,
+  Task,
+  Booking,
+  Review,
+  Payment,
+  Message,
+};

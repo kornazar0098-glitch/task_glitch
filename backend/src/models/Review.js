@@ -1,1 +1,55 @@
-const { DataTypes } = require('sequelize');\nconst sequelize = require('../config/database');\n\nconst Review = sequelize.define('Review', {\n  id: {\n    type: DataTypes.INTEGER,\n    primaryKey: true,\n    autoIncrement: true,\n  },\n  booking_id: {\n    type: DataTypes.INTEGER,\n    allowNull: false,\n    references: {\n      model: 'bookings',\n      key: 'id',\n    },\n  },\n  reviewer_id: {\n    type: DataTypes.INTEGER,\n    allowNull: false,\n    references: {\n      model: 'users',\n      key: 'id',\n    },\n  },\n  reviewed_user_id: {\n    type: DataTypes.INTEGER,\n    allowNull: false,\n    references: {\n      model: 'users',\n      key: 'id',\n    },\n  },\n  rating: {\n    type: DataTypes.INTEGER,\n    allowNull: false,\n    validate: {\n      min: 1,\n      max: 5,\n    },\n  },\n  comment: {\n    type: DataTypes.TEXT,\n    allowNull: true,\n  },\n  is_worker_review: {\n    type: DataTypes.BOOLEAN,\n    defaultValue: false,\n  },\n}, {\n  timestamps: true,\n  tableName: 'reviews',\n});\n\nmodule.exports = Review;\n
+const { DataTypes } = require('sequelize');
+const sequelize = require('../config/database');
+
+const Review = sequelize.define('Review', {
+  id: {
+    type: DataTypes.INTEGER,
+    primaryKey: true,
+    autoIncrement: true,
+  },
+  booking_id: {
+    type: DataTypes.INTEGER,
+    allowNull: false,
+    references: {
+      model: 'bookings',
+      key: 'id',
+    },
+  },
+  reviewer_id: {
+    type: DataTypes.INTEGER,
+    allowNull: false,
+    references: {
+      model: 'users',
+      key: 'id',
+    },
+  },
+  reviewed_user_id: {
+    type: DataTypes.INTEGER,
+    allowNull: false,
+    references: {
+      model: 'users',
+      key: 'id',
+    },
+  },
+  rating: {
+    type: DataTypes.INTEGER,
+    allowNull: false,
+    validate: {
+      min: 1,
+      max: 5,
+    },
+  },
+  comment: {
+    type: DataTypes.TEXT,
+    allowNull: true,
+  },
+  review_type: {
+    type: DataTypes.ENUM('worker', 'customer'),
+    allowNull: false,
+  },
+}, {
+  timestamps: true,
+  tableName: 'reviews',
+});
+
+module.exports = Review;

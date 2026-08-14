@@ -1,1 +1,97 @@
-const { DataTypes } = require('sequelize');\nconst sequelize = require('../config/database');\nconst bcryptjs = require('bcryptjs');\n\nconst User = sequelize.define('User', {\n  id: {\n    type: DataTypes.INTEGER,\n    primaryKey: true,\n    autoIncrement: true,\n  },\n  name: {\n    type: DataTypes.STRING(255),\n    allowNull: false,\n  },\n  email: {\n    type: DataTypes.STRING(255),\n    allowNull: false,\n    unique: true,\n    validate: {\n      isEmail: true,\n    },\n  },\n  password: {\n    type: DataTypes.STRING(255),\n    allowNull: false,\n  },\n  phone: {\n    type: DataTypes.STRING(20),\n    allowNull: true,\n  },\n  role: {\n    type: DataTypes.ENUM('customer', 'worker', 'admin'),\n    defaultValue: 'customer',\n  },\n  avatar: {\n    type: DataTypes.STRING(500),\n    allowNull: true,\n  },\n  bio: {\n    type: DataTypes.TEXT,\n    allowNull: true,\n  },\n  rating: {\n    type: DataTypes.DECIMAL(3, 2),\n    defaultValue: 5.0,\n  },\n  completed_tasks: {\n    type: DataTypes.INTEGER,\n    defaultValue: 0,\n  },\n  is_verified: {\n    type: DataTypes.BOOLEAN,\n    defaultValue: false,\n  },\n  location: {\n    type: DataTypes.STRING(255),\n    allowNull: true,\n  },\n  latitude: {\n    type: DataTypes.DECIMAL(10, 8),\n    allowNull: true,\n  },\n  longitude: {\n    type: DataTypes.DECIMAL(11, 8),\n    allowNull: true,\n  },\n  bank_account: {\n    type: DataTypes.STRING(255),\n    allowNull: true,\n  },\n  is_active: {\n    type: DataTypes.BOOLEAN,\n    defaultValue: true,\n  },\n}, {\n  timestamps: true,\n  tableName: 'users',\n});\n\n// Hash password before saving\nUser.beforeCreate(async (user) => {\n  const salt = await bcryptjs.genSalt(10);\n  user.password = await bcryptjs.hash(user.password, salt);\n});\n\nUser.beforeUpdate(async (user) => {\n  if (user.changed('password')) {\n    const salt = await bcryptjs.genSalt(10);\n    user.password = await bcryptjs.hash(user.password, salt);\n  }\n});\n\n// Method to compare password\nUser.prototype.comparePassword = async function(password) {\n  return await bcryptjs.compare(password, this.password);\n};\n\nmodule.exports = User;\n
+const { DataTypes } = require('sequelize');
+const sequelize = require('../config/database');
+const bcrypt = require('bcryptjs');
+
+const User = sequelize.define('User', {
+  id: {
+    type: DataTypes.INTEGER,
+    primaryKey: true,
+    autoIncrement: true,
+  },
+  name: {
+    type: DataTypes.STRING,
+    allowNull: false,
+    trim: true,
+  },
+  email: {
+    type: DataTypes.STRING,
+    allowNull: false,
+    unique: true,
+    lowercase: true,
+    validate: {
+      isEmail: true,
+    },
+  },
+  phone: {
+    type: DataTypes.STRING,
+    allowNull: false,
+    unique: true,
+  },
+  password: {
+    type: DataTypes.STRING,
+    allowNull: false,
+  },
+  role: {
+    type: DataTypes.ENUM('customer', 'worker'),
+    defaultValue: 'customer',
+  },
+  avatar: {
+    type: DataTypes.STRING,
+    allowNull: true,
+  },
+  bio: {
+    type: DataTypes.TEXT,
+    allowNull: true,
+  },
+  rating: {
+    type: DataTypes.FLOAT,
+    defaultValue: 0,
+  },
+  total_reviews: {
+    type: DataTypes.INTEGER,
+    defaultValue: 0,
+  },
+  is_verified: {
+    type: DataTypes.BOOLEAN,
+    defaultValue: false,
+  },
+  is_active: {
+    type: DataTypes.BOOLEAN,
+    defaultValue: true,
+  },
+  location: {
+    type: DataTypes.STRING,
+    allowNull: true,
+  },
+  latitude: {
+    type: DataTypes.DECIMAL(10, 8),
+    allowNull: true,
+  },
+  longitude: {
+    type: DataTypes.DECIMAL(11, 8),
+    allowNull: true,
+  },
+}, {
+  timestamps: true,
+  tableName: 'users',
+  hooks: {
+    beforeCreate: async (user) => {
+      if (user.password) {
+        const salt = await bcrypt.genSalt(10);
+        user.password = await bcrypt.hash(user.password, salt);
+      }
+    },
+    beforeUpdate: async (user) => {
+      if (user.changed('password')) {
+        const salt = await bcrypt.genSalt(10);
+        user.password = await bcrypt.hash(user.password, salt);
+      }
+    },
+  },
+});
+
+User.prototype.comparePassword = async function (password) {
+  return await bcrypt.compare(password, this.password);
+};
+
+module.exports = User;

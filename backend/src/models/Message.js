@@ -1,1 +1,51 @@
-const { DataTypes } = require('sequelize');\nconst sequelize = require('../config/database');\n\nconst Message = sequelize.define('Message', {\n  id: {\n    type: DataTypes.INTEGER,\n    primaryKey: true,\n    autoIncrement: true,\n  },\n  booking_id: {\n    type: DataTypes.INTEGER,\n    allowNull: false,\n    references: {\n      model: 'bookings',\n      key: 'id',\n    },\n  },\n  sender_id: {\n    type: DataTypes.INTEGER,\n    allowNull: false,\n    references: {\n      model: 'users',\n      key: 'id',\n    },\n  },\n  receiver_id: {\n    type: DataTypes.INTEGER,\n    allowNull: false,\n    references: {\n      model: 'users',\n      key: 'id',\n    },\n  },\n  content: {\n    type: DataTypes.TEXT,\n    allowNull: false,\n  },\n  attachments: {\n    type: DataTypes.JSON,\n    defaultValue: [],\n  },\n  is_read: {\n    type: DataTypes.BOOLEAN,\n    defaultValue: false,\n  },\n  read_at: {\n    type: DataTypes.DATE,\n    allowNull: true,\n  },\n}, {\n  timestamps: true,\n  tableName: 'messages',\n});\n\nmodule.exports = Message;\n
+const { DataTypes } = require('sequelize');
+const sequelize = require('../config/database');
+
+const Message = sequelize.define('Message', {
+  id: {
+    type: DataTypes.INTEGER,
+    primaryKey: true,
+    autoIncrement: true,
+  },
+  booking_id: {
+    type: DataTypes.INTEGER,
+    allowNull: false,
+    references: {
+      model: 'bookings',
+      key: 'id',
+    },
+  },
+  sender_id: {
+    type: DataTypes.INTEGER,
+    allowNull: false,
+    references: {
+      model: 'users',
+      key: 'id',
+    },
+  },
+  receiver_id: {
+    type: DataTypes.INTEGER,
+    allowNull: false,
+    references: {
+      model: 'users',
+      key: 'id',
+    },
+  },
+  content: {
+    type: DataTypes.TEXT,
+    allowNull: false,
+  },
+  is_read: {
+    type: DataTypes.BOOLEAN,
+    defaultValue: false,
+  },
+  read_at: {
+    type: DataTypes.DATE,
+    allowNull: true,
+  },
+}, {
+  timestamps: true,
+  tableName: 'messages',
+});
+
+module.exports = Message;

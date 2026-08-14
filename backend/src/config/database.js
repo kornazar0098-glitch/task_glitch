@@ -1,1 +1,22 @@
-const { Sequelize } = require('sequelize');\nrequire('dotenv').config();\n\nconst sequelize = new Sequelize(\n  process.env.DB_NAME || 'task_glitch',\n  process.env.DB_USER || 'postgres',\n  process.env.DB_PASSWORD || 'password',\n  {\n    host: process.env.DB_HOST || 'localhost',\n    port: process.env.DB_PORT || 5432,\n    dialect: 'postgres',\n    logging: process.env.NODE_ENV === 'development' ? console.log : false,\n  }\n);\n\nmodule.exports = sequelize;\n
+const { Sequelize } = require('sequelize');
+require('dotenv').config();
+
+const sequelize = new Sequelize(
+  process.env.DB_NAME || 'task_glitch',
+  process.env.DB_USER || 'postgres',
+  process.env.DB_PASSWORD || 'postgres',
+  {
+    host: process.env.DB_HOST || 'localhost',
+    port: process.env.DB_PORT || 5432,
+    dialect: 'postgres',
+    logging: false,
+    pool: {
+      max: 5,
+      min: 0,
+      acquire: 30000,
+      idle: 10000,
+    },
+  }
+);
+
+module.exports = sequelize;

@@ -1,1 +1,81 @@
-const { DataTypes } = require('sequelize');\nconst sequelize = require('../config/database');\n\nconst Task = sequelize.define('Task', {\n  id: {\n    type: DataTypes.INTEGER,\n    primaryKey: true,\n    autoIncrement: true,\n  },\n  customer_id: {\n    type: DataTypes.INTEGER,\n    allowNull: false,\n    references: {\n      model: 'users',\n      key: 'id',\n    },\n  },\n  title: {\n    type: DataTypes.STRING(255),\n    allowNull: false,\n  },\n  description: {\n    type: DataTypes.TEXT,\n    allowNull: true,\n  },\n  category: {\n    type: DataTypes.ENUM(\n      'shopping',\n      'delivery',\n      'cleaning',\n      'handyman',\n      'moving',\n      'errands',\n      'other'\n    ),\n    defaultValue: 'other',\n  },\n  status: {\n    type: DataTypes.ENUM('open', 'assigned', 'in_progress', 'completed', 'cancelled'),\n    defaultValue: 'open',\n  },\n  location: {\n    type: DataTypes.STRING(255),\n    allowNull: false,\n  },\n  latitude: {\n    type: DataTypes.DECIMAL(10, 8),\n    allowNull: true,\n  },\n  longitude: {\n    type: DataTypes.DECIMAL(11, 8),\n    allowNull: true,\n  },\n  budget: {\n    type: DataTypes.DECIMAL(10, 2),\n    allowNull: false,\n  },\n  deadline: {\n    type: DataTypes.DATE,\n    allowNull: true,\n  },\n  images: {\n    type: DataTypes.JSON,\n    defaultValue: [],\n  },\n  priority: {\n    type: DataTypes.ENUM('low', 'medium', 'high'),\n    defaultValue: 'medium',\n  },\n  is_urgent: {\n    type: DataTypes.BOOLEAN,\n    defaultValue: false,\n  },\n}, {\n  timestamps: true,\n  tableName: 'tasks',\n});\n\nmodule.exports = Task;\n
+const { DataTypes } = require('sequelize');
+const sequelize = require('../config/database');
+
+const Task = sequelize.define('Task', {
+  id: {
+    type: DataTypes.INTEGER,
+    primaryKey: true,
+    autoIncrement: true,
+  },
+  customer_id: {
+    type: DataTypes.INTEGER,
+    allowNull: false,
+    references: {
+      model: 'users',
+      key: 'id',
+    },
+  },
+  title: {
+    type: DataTypes.STRING,
+    allowNull: false,
+    trim: true,
+  },
+  description: {
+    type: DataTypes.TEXT,
+    allowNull: false,
+  },
+  category: {
+    type: DataTypes.ENUM(
+      'shopping',
+      'delivery',
+      'cleaning',
+      'handyman',
+      'moving',
+      'pet-care',
+      'personal-errands',
+      'other'
+    ),
+    allowNull: false,
+  },
+  budget: {
+    type: DataTypes.DECIMAL(12, 2),
+    allowNull: false,
+  },
+  status: {
+    type: DataTypes.ENUM('open', 'in_progress', 'completed', 'cancelled'),
+    defaultValue: 'open',
+  },
+  location: {
+    type: DataTypes.STRING,
+    allowNull: false,
+  },
+  latitude: {
+    type: DataTypes.DECIMAL(10, 8),
+    allowNull: true,
+  },
+  longitude: {
+    type: DataTypes.DECIMAL(11, 8),
+    allowNull: true,
+  },
+  deadline: {
+    type: DataTypes.DATE,
+    allowNull: false,
+  },
+  images: {
+    type: DataTypes.JSON,
+    defaultValue: [],
+  },
+  assigned_to: {
+    type: DataTypes.INTEGER,
+    allowNull: true,
+    references: {
+      model: 'users',
+      key: 'id',
+    },
+  },
+}, {
+  timestamps: true,
+  tableName: 'tasks',
+});
+
+module.exports = Task;
