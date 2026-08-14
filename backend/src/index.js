@@ -15,6 +15,7 @@ app.use(express.urlencoded({ extended: true }));
 // Routes
 const authRoutes = require('./routes/authRoutes');
 const taskRoutes = require('./routes/taskRoutes');
+const bookingRoutes = require('./routes/bookingRoutes');
 
 app.get('/api/health', (req, res) => {
   res.json({ status: 'ok', message: 'Task Glitch API is running' });
@@ -25,6 +26,9 @@ app.use('/api/auth', authRoutes);
 
 // Task routes
 app.use('/api/tasks', taskRoutes);
+
+// Booking routes
+app.use('/api/bookings', bookingRoutes);
 
 // Error handling middleware
 app.use((err, req, res, next) => {
