@@ -1,6 +1,7 @@
 const express = require('express');
 const cors = require('cors');
 const helmet = require('helmet');
+const syncDatabase = require('./utils/database-sync');
 require('dotenv').config();
 
 const app = express();
@@ -12,20 +13,35 @@ app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 
 // Routes
+const authRoutes = require('./routes/authRoutes');
+
 app.get('/api/health', (req, res) => {
   res.json({ status: 'ok', message: 'Task Glitch API is running' });
 });
 
+// Auth routes
+app.use('/api/auth', authRoutes);
+
 // Error handling middleware
 app.use((err, req, res, next) => {
   console.error(err.stack);
-  res.status(500).json({ error: 'Something went wrong!' });
+  res.status(500).json({ error: 'خطای سرور' });
 });
 
-// Start server
+// Start server and sync database
 const PORT = process.env.PORT || 5000;
-app.listen(PORT, () => {
-  console.log(`Server running on port ${PORT}`);
-});
+const startServer = async () => {
+  try {
+    await syncDatabase();
+    app.listen(PORT, () => {
+      console.log(`✅ Server running on port ${PORT}`);
+    });
+  } catch (error) {
+    console.error('❌ Failed to start server:', error);
+    process.exit(1);
+  }
+};
+
+startServer();
 
 module.exports = app;
