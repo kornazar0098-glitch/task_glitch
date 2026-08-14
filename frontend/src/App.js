@@ -1,29 +1,32 @@
 import React from 'react';
-import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
+import { BrowserRouter as Router, Routes, Route, Navigate } from 'react-router-dom';
+import { useSelector } from 'react-redux';
+import Login from './pages/Login';
+import Register from './pages/Register';
+import TaskList from './pages/TaskList';
 import './App.css';
+
+function PrivateRoute({ children }) {
+  const { isAuthenticated } = useSelector((state) => state.auth);
+  return isAuthenticated ? children : <Navigate to="/login" />;
+}
 
 function App() {
   return (
     <Router>
-      <div className="App">
-        <header className="App-header">
-          <h1>Task Glitch</h1>
-          <p>استخدام افراد برای انجام کارهای روزمره</p>
-        </header>
-        <Routes>
-          <Route path="/" element={<Home />} />
-        </Routes>
-      </div>
+      <Routes>
+        <Route path="/login" element={<Login />} />
+        <Route path="/register" element={<Register />} />
+        <Route
+          path="/"
+          element={
+            <PrivateRoute>
+              <TaskList />
+            </PrivateRoute>
+          }
+        />
+      </Routes>
     </Router>
-  );
-}
-
-function Home() {
-  return (
-    <div>
-      <h2>خوش آمدید</h2>
-      <p>سریعا برنامه را آماده خواهیم کرد!</p>
-    </div>
   );
 }
 
